@@ -1,0 +1,27 @@
+services:
+  mysqldb:
+    image: 'mysql:latest'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=techgeekconnect
+    container_name: "mysqldb"
+    networks:
+      - my-network
+    healthcheck:
+      test: ['CMD','mysqladmin','ping','-h','localhost']
+      timeout: 20s
+      retries: 10
+
+  mysqlconnect:
+    build: ./
+    container_name: "dbconnect"
+    networks:
+      - my-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+networks:
+  my-network:
